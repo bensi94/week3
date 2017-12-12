@@ -27,7 +27,7 @@ node {
         dir('client') {
             sh 'npm run test:nowatch'
         }
-        withEnv(['BUILD_ID=dontkill'){
+        withEnv(['BUILD_ID=dontkill']){
             sh 'nohup npm run startserver:ci'
         }
         sh 'npm run apitest:nowatch'
