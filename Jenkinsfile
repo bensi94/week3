@@ -22,9 +22,10 @@ node {
         }
         sh 'npm run apitest:nowatch'
         sh 'npm run loadtest:nowatch'
-        sh 'docker stop $(docker ps -a -q)'
     }
+    
     stage('Build'){
+        sh 'docker stop $(docker ps -a -q)'
         withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USER')]) {
             sh 'docker login -u $DOCKER_USER -p $DOCKER_PASSWORD'
             sh './dockerbuild.sh'
