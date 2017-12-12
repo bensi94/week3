@@ -15,6 +15,13 @@ node {
         }
     }
     stage('Test') {
+        def exists1 = fileExists 'test-api-incoming-events.log'
+        def exists2 = fileExists 'test-api-outgoing-commands.log'
+        if (!exists1 && !exists2) {
+            sh 'touch test-api-incoming-events.log'
+            sh 'touch test-api-outgoing-commands.log'
+        }
+
         sh 'npm run startpostgres && sleep 10 && npm run migratedb:dev'
         sh 'npm run test:nowatch'
         dir('client') {
