@@ -27,11 +27,11 @@ node {
         dir('client') {
             sh 'npm run test:nowatch'
         }
-        withEnv(['JENKINS_NODE_COOKIE=dontkill'){
+        withEnv(['BUILD_ID=dontkill'){
             sh 'nohup npm run startserver:ci'
-            sh 'npm run apitest:nowatch'
-            sh 'npm run loadtest:nowatch'
         }
+        sh 'npm run apitest:nowatch'
+        sh 'npm run loadtest:nowatch'
     }
 
     stage('Build'){
