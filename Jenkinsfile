@@ -17,6 +17,8 @@ node {
         dir('client') {
             sh 'npm run test:nowatch'
         }
+        sh 'npm run apitest'
+        sh 'npm run loadtest'
         sh 'docker stop $(docker ps -a -q)'
     }
     stage('Build'){
