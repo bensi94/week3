@@ -37,6 +37,8 @@ function playGame(done) {
 
 
                      Run load tests again. They should fail. Explain why they fail.
+
+                     The test does not fail.
          */
         userB.expectGameJoined().expectMoveMade('X').joinGame(userA.getGame().gameId).then(function () {
             userB.expectMoveMade('O').expectMoveMade('X').placeMove(1, 0).then(() => {

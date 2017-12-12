@@ -1,61 +1,56 @@
-#!/bin/bash
-set -e
+INSTANCE_DIR="ec2_instance"
+#this is the standar securityGroup name I use
+SECURITY_GROUP_NAME="bensi94-securityGroup"
 
-echo "Check for instance information..."
-INSTANCE_DIR=~/aws
+#Start by making directory where the keypair.pem file, instance-id, and more info about the instance will be stored locally
+[ -d "${INSTANCE_DIR}" ] || mkdir ${INSTANCE_DIR}
 
-export AMI_IMAGE_ID="ami-1a962263"
+#This is my initial keypair name but I start by asking AWS if that already exist and then I change it in the while loop until I find a free one
+KEY_PAIR_NAME="bensiKeyPair_0"
+keyPairExists=$(aws ec2 describe-key-pairs --query KeyPairs[*].KeyName --output=text)
+i=1
+while [[ $keyPairExists == *$KEY_PAIR_NAME* ]]; do
+    KEY_PAIR_NAME="bensiKeyPair_$i"
+    ((i++))
+done
 
-echo No instance information present, continuing.
-[ -d ${INSTANCE_DIR} ] || mkdir ${INSTANCE_DIR}
+#Then I make a key-pair and save the pem key file to local host
+aws ec2 create-key-pair --key-name ${KEY_PAIR_NAME} --query 'KeyMaterial' --output text > ${INSTANCE_DIR}/${KEY_PAIR_NAME}.pem
+chmod 400 ${INSTANCE_DIR}/${KEY_PAIR_NAME}.pem
 
-USERNAME=$(aws iam get-user --query 'User.UserName' --output text)
+#Here I check if the standard securityGroup exists on AWS (Should be always except the first time or it's deleted)  I use the same security group for all instances
+sgExists=$(aws ec2 describe-security-groups --group-names $SECURITY_GROUP_NAME 2>&1)
+if [[ $sgExists == *"InvalidGroup.NotFound"* ]]; then
 
-SECURITY_GROUP_NAME=hgop-${USERNAME}
-
-echo "Using security group name ${SECURITY_GROUP_NAME}"
-
-if [ ! -e ~/aws/security-group-name.txt ]; then
-    echo ${SECURITY_GROUP_NAME} > ~/aws/security-group-name.txt
-fi
-
-if [ ! -e ${INSTANCE_DIR}/${SECURITY_GROUP_NAME}.pem ]; then
-    aws ec2 create-key-pair --key-name ${SECURITY_GROUP_NAME} --query 'KeyMaterial' --output text > ${INSTANCE_DIR}/${SECURITY_GROUP_NAME}.pem
-    chmod 400 ${INSTANCE_DIR}/${SECURITY_GROUP_NAME}.pem
-fi
-
-if [ ! -e ~/aws/security-group-id.txt ]; then
+    #If it does not exists we make a new securityGroup
     SECURITY_GROUP_ID=$(aws ec2 create-security-group --group-name ${SECURITY_GROUP_NAME} --description "security group for dev environment in EC2" --query "GroupId"  --output=text)
-    echo ${SECURITY_GROUP_ID} > ~/aws/security-group-id.txt
-    echo Created security group ${SECURITY_GROUP_NAME} with ID ${SECURITY_GROUP_ID}
+
+    #Make the protocol acessable from anywhere
+    aws ec2 authorize-security-group-ingress --group-name ${SECURITY_GROUP_NAME} --protocol tcp --port 80 --cidr 0.0.0.0/0
+    aws ec2 authorize-security-group-ingress --group-name ${SECURITY_GROUP_NAME} --protocol tcp --port 22 --cidr 0.0.0.0/0
+    aws ec2 authorize-security-group-ingress --group-name ${SECURITY_GROUP_NAME} --protocol tcp --port 8080 --cidr 0.0.0.0/0
 else
-    SECURITY_GROUP_ID=$(cat ~/aws/security-group-id.txt)
+    #If the security group alredy exists we just gets its ID
+    SECURITY_GROUP_ID=$(aws ec2 describe-security-groups --group-names bensi94-securityGroup --query "SecurityGroups[*].GroupId" --output=text)
 fi
 
-MY_PUBLIC_IP=$(curl http://checkip.amazonaws.com)
-if [ ! -e ~/aws/instance-id.txt ]; then
-    echo Create ec2 instance on security group ${SECURITY_GROUP_ID} ${AMI_IMAGE_ID}
-    INSTANCE_INIT_SCRIPT=docker-instance-init.sh
-    INSTANCE_ID=$(aws ec2 run-instances  --user-data file://${INSTANCE_INIT_SCRIPT} --image-id ${AMI_IMAGE_ID} --security-group-ids ${SECURITY_GROUP_ID} --count 1 --instance-type t2.micro --key-name ${SECURITY_GROUP_NAME} --query 'Instances[0].InstanceId'  --output=text)
-    echo ${INSTANCE_ID} > ~/aws/instance-id.txt
+#save the KEY_PAIR_NAME and SECURITY_GROUP_ID to localhost
+echo ${KEY_PAIR_NAME} > ./ec2_instance/key-pair-name.txt
+echo ${SECURITY_GROUP_ID} > ./ec2_instance/security-group-id.txt
 
-    echo Waiting for instance to be running
-    echo aws ec2 wait --region eu-west-1 instance-running --instance-ids ${INSTANCE_ID}
-    aws ec2 wait --region eu-west-1 instance-running --instance-ids ${INSTANCE_ID}
-    echo EC2 instance ${INSTANCE_ID} ready and available on ${INSTANCE_PUBLIC_NAME}
+#Here we make the actual instance and run some start up commands on it from ec2-instance-init where docker and more is installed, and we get the instanceID as well
+INSTANCE_ID=$(aws ec2 run-instances --user-data file://docker-instance-init.sh --image-id ami-e7d6c983 --security-group-ids ${SECURITY_GROUP_ID} --count 1 --instance-type t2.micro --key-name ${KEY_PAIR_NAME} --query 'Instances[0].InstanceId'  --output=text)
+
+#change the name of the local directory to the INSTANCE_ID so we can keep many instance directories and organize them
+mv ec2_instance $INSTANCE_ID
+
+#save the instance to localhost
+echo ${INSTANCE_ID} > ./$INSTANCE_ID/instance-id.txt
+
+#copy to keep this between builds
+test -d ~/runningInstances/ || mkdir -p ~/runningInstances
+cp -R $INSTANCE_ID ~/runningInstances/$INSTANCE_ID
+
+if [ ! -f ~/runningInstances/delete-aws-docker-host-instance.sh ]; then
+    cp delete-aws-docker-host-instance.sh ~/runningInstances/
 fi
-
-if [ ! -e ~/aws/instance-public-name.txt ]; then
-    export INSTANCE_PUBLIC_NAME=$(aws ec2 describe-instances --instance-ids ${INSTANCE_ID} --query "Reservations[*].Instances[*].PublicDnsName" --output=text)
-    echo ${INSTANCE_PUBLIC_NAME} > ~/aws/instance-public-name.txt
-fi
-
-
-MY_CIDR=${MY_PUBLIC_IP}/32
-
-echo Using CIDR ${MY_CIDR} for access restrictions.
-
-set +e
-aws ec2 authorize-security-group-ingress --group-name ${SECURITY_GROUP_NAME} --protocol tcp --port 22 --cidr ${MY_CIDR}
-aws ec2 authorize-security-group-ingress --group-name ${SECURITY_GROUP_NAME} --protocol tcp --port 80 --cidr ${MY_CIDR}
-

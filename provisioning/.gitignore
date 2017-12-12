@@ -1,1 +1,6 @@
 ec2_instance/
+bensiKeyPair_0.pem
+*.pem
+instance-id.txt
+key-pair-name.txt
+security-group-id.txt

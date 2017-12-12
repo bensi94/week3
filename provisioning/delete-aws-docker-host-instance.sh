@@ -1,20 +1,21 @@
-#!/usr/bin/env bash
+#Here we use our parameter id as folder we
+INSTANCE_DIR=$1
 
-INSTANCE_ID=$(cat ~/aws/instance-id.txt)
-SECURITY_GROUP_ID=$(cat ~/aws/security-group-id.txt)
-SECURITY_GROUP_NAME=$(cat ~/aws/security-group-name.txt)
+#We only try to delete if the local directory exists
+if [ -d "${INSTANCE_DIR}" ]; then
+    # Get our instance id
+    INSTANCE_ID=$1
+    # Get our KEY_PAIR_NAME from the local directory
+    KEY_PAIR_NAME=$(cat ./$INSTANCE_DIR/key-pair-name.txt)
 
-aws ec2 terminate-instances --instance-ids ${INSTANCE_ID}
+    # terminate the instance using the instnace_id
+    aws ec2 terminate-instances --instance-ids ${INSTANCE_ID}
 
-echo Waiting for instance to terminate....
-aws ec2 wait --region eu-west-1 instance-terminated --instance-ids ${INSTANCE_ID}
-echo Instance ${INSTANCE_ID} terminated
+    # let the script wait until the instance is terminated so it can delete the key pair successfully
+    aws ec2 wait --region eu-west-2 instance-terminated --instance-ids ${INSTANCE_ID}
 
-rm ~/aws/instance-id.txt
-rm ~/aws/instance-public-name.txt
+    aws ec2 delete-key-pair --key-name ${KEY_PAIR_NAME}
 
-#aws ec2 delete-security-group --group-id ${SECURITY_GROUP_ID}
-#
-#aws ec2 delete-key-pair --key-name ${SECURITY_GROUP_NAME}
-#
-#rm  -rf ec2_instance
+    #Remove the directory from local
+    sudo rm  -rf $INSTANCE_DIR
+fi
