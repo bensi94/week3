@@ -17,6 +17,7 @@ node {
         dir('client') {
             sh 'npm run test:nowatch'
         }
+        sh 'docker stop $(docker ps -a -q)'
     }
     stage('Build'){
         withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USER')]) {
