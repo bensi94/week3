@@ -20,7 +20,6 @@ module.exports=function(injected){
             push:function(verb){
                 waitingFor.counters[verb]=waitingFor.counters[verb] || [];
                 waitingFor.counters[verb].push(verb);
-                console.log(verb);
             },
             pop:function(verb, message){
                 if(!waitingFor.counters[verb]){
