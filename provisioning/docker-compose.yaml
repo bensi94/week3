@@ -5,8 +5,13 @@ services:
       - 'POSTGRES_HOST=postgres'
       - 'POSTGRES_PORT=5432'
       - 'PORT=8080'
+<<<<<<< HEAD
       - 'DB=prod'
     image: 'bensi94/tictactoe:${GIT_COMMIT}'
+=======
+      - 'DB_ENV=prod'
+    image: 'ironpeak/tictactoe:${GIT_COMMIT}'
+>>>>>>> c347cfbb7002ad8b15eb77d687f232023ddda97c
     ports:
       - '8080:8080'
       - '5432:5432'
