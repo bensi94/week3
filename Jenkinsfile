@@ -6,10 +6,10 @@ node {
     }
     stage('Instalize') {
         echo 'Instantizing..'
-        sh 'npm install'
+        sh 'yarn install'
         sh 'npm run startpostgres && sleep 10 && npm run migratedb:dev'
         dir('client') {
-            sh 'npm install'
+            sh 'yarn install'
         }
     }
     stage('Test') {
