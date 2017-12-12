@@ -3,6 +3,9 @@ node {
     stage('Clean') {
         // Clean files from last build.
         sh 'git clean -dfxq'
+        sh 'docker kill $(docker ps -q)'
+        sh 'docker rm $(docker ps -a -q)'
+        sh 'docker rmi $(docker images -q)'
     }
     stage('Instalize') {
         echo 'Instantizing..'
