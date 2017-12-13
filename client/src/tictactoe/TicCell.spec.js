@@ -43,8 +43,37 @@ describe("Tic Cell", function () {
         ).toEqual(1);
     });
 
-    it('should do more stuff', function () {
+    it('Move should be X on X move and O on O move', function () {
+        const cellWrapperX = shallow(<TicCell move={'X'} />);
+        const cellWrapperO = shallow(<TicCell move={'O'} />);
 
-    })
+        expect(
+            cellWrapperX.unrendered.props.move
+        ).toEqual('X');
+
+        expect(
+            cellWrapperO.unrendered.props.move
+        ).toEqual('O');
+    });
+
+    it('MoveEvent from side should put that side in cell', function () {
+        // console.log(eventRouter);
+        // console.log(commandRouter);
+        // console.log(commandsReceived);
+        // const cellDiv = component.find('div');
+        // console.log(cellDiv.props());
+        // cellDiv.simulate('click');
+        // console.log(eventRouter);
+        // console.log(commandRouter);
+        // console.log(commandsReceived);
+        // console.log(cellDiv);
+        // component.node.simulate('click');
+        // console.log(component.find('div'));
+        // console.log();
+        // expect(
+        //     component.unrendered.props.move
+        // ).toEqual('X');
+
+    });
 
 });

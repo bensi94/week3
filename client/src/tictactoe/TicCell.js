@@ -16,7 +16,12 @@ export default function (injected) {
         }
         componentWillMount(){
             this.unsubscribe = eventRouter.on('MovePlaced', (moveEvent)=>{
-            })
+                if(this.props.coordinates.x === moveEvent.move.xy.x && this.props.coordinates.y === moveEvent.move.xy.y){
+                    this.setState({
+                        move: moveEvent.move
+                    });
+                };    
+            });
         }
         componentWillUnmount(){
             this.unsubscribe();
