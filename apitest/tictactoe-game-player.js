@@ -40,7 +40,6 @@ function playGame(done) {
 
                      The test does not fail.
          */
-         console.log("USER B", userB);
         userB.expectGameJoined().expectMoveMade('X').joinGame(userA.getGame().gameId).then(function () {
             userB.expectMoveMade('O').expectMoveMade('X').placeMove(1, 0).then(() => {
                 userB.expectMoveMade('O').expectMoveMade('X').expectGameWon().placeMove(0, 2).then(() => {

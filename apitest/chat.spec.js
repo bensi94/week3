@@ -34,16 +34,17 @@ describe('User chat API', function(){
     });
 
     it('should get user session information on connect',function(done){
-        // There is a weak race condition here. Why ?
+        // There is a weak race condition here beacuse we have to wait for the asynchronous call to finish
+        // Before we can determine the result
         user.expectUserAck().then(done);
     });
 
     it('should receive chat message back after sending chat command',function(done){
-        // There is no race condition here. Why ?
+        // There is no race condition here beacuse this is asynchronous calls
+        //and we have to make sure the message sends to the chat before we can finish the function
         user.expectChatMessageReceived('message one ')
             .sendChatMessage('message one ')
             .then(done);
     });
 
 });
-

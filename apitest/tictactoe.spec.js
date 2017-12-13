@@ -24,4 +24,3 @@ describe('Tictactoe API', function () {
     });
 
 });
-

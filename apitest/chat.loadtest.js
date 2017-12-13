@@ -62,5 +62,3 @@ describe('User chat load test', function(){
             });
     });
 });
-
-
