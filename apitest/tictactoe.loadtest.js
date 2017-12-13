@@ -25,7 +25,7 @@ describe('Tictactoe load test', function () {
 
     /* Assignment: Find appropriate numbers to configure the load test so it passes on your buildserver
     * under normal load. */
-    let timelimit = 10000;
+    let timelimit = 20000;
     let count = 100;
 
     beforeEach(function (done) {

@@ -21,7 +21,7 @@ node {
         dir('client') {
             sh 'npm run test:nowatch'
         }
-        sh 'npm run startserver & npm run apitest:nowatch && npm run loadtest:nowatch && sleep 10 && kill $!'
+        sh 'npm run startserver:ci & npm run apitest:nowatch && npm run loadtest:nowatch && sleep 10 && kill $!'
         junit '**/TestsResults/*.xml'
     }
 
