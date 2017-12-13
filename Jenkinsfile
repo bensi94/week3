@@ -16,23 +16,12 @@ node {
         sh 'yarn add jasmine-reporters'
     }
     stage('Test') {
-        def exists1 = fileExists 'test-api-incoming-events.log'
-        def exists2 = fileExists 'test-api-outgoing-commands.log'
-        if (!exists1 && !exists2) {
-            sh 'touch test-api-incoming-events.log'
-            sh 'touch test-api-outgoing-commands.log'
-        }
-
         sh 'npm run startpostgres && sleep 10 && npm run migratedb:dev'
         sh 'npm run test:nowatch'
         dir('client') {
             sh 'npm run test:nowatch'
         }
-        // withEnv(['BUILD_ID=dontkill']){
-        //     sh 'nohup npm run startserver:ci'
-        // }
-        // sh 'npm run apitest:nowatch'
-        // sh 'npm run loadtest:nowatch'
+        sh 'npm run startserver & npm run apitest:nowatch && npm run loadtest:nowatch && sleep 10 && kill $!'
         junit '**/TestsResults/*.xml'
     }
 
