@@ -16,7 +16,6 @@ export default function (injected) {
         }
         componentWillMount(){
             this.unsubscribe = eventRouter.on('MovePlaced', (moveEvent)=>{
-            //    Key logic goes here. Remember---the cell gets all move events, not only its own.
             })
         }
         componentWillUnmount(){
@@ -37,9 +36,9 @@ export default function (injected) {
             }
         }
         render() {
-            return <div ref="ticCell" className="ticcell" onClick={this.placeMove(this.props.coordinates)}>
+            return ( <div ref="ticCell" className="ticcell" onClick={this.placeMove(this.props.coordinates)}>
                 {this.state.move.side}
-            </div>
+            </div>)
         }
     }
     return TictactoeMessage;
