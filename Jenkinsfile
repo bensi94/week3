@@ -33,7 +33,7 @@ node {
         // }
         // sh 'npm run apitest:nowatch'
         // sh 'npm run loadtest:nowatch'
-        junit '**/target/*.xml'
+        junit './TestsResults/*.xml'
     }
 
     stage('Build'){
