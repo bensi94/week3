@@ -13,6 +13,7 @@ node {
         dir('client') {
             sh 'yarn install'
         }
+        sh 'yarn add jasmine-reporters'
     }
     stage('Test') {
         def exists1 = fileExists 'test-api-incoming-events.log'
