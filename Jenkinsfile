@@ -3,9 +3,9 @@ node {
     stage('Clean') {
         // Clean files from last build.
         sh 'git clean -dfxq'
-        sh 'docker kill $(docker ps -q)'
-        sh 'docker rm $(docker ps -a -q)'
-        sh 'docker rmi $(docker images -q)'
+        sh 'docker kill $(docker ps -q) || true'
+        sh 'docker rm $(docker ps -a -q)|| true'
+        sh 'docker rmi $(docker images -q) || true'
     }
     stage('Instalize') {
         echo 'Instantizing..'
@@ -36,7 +36,7 @@ node {
     }
 
     stage('Build'){
-        sh 'docker stop $(docker ps -a -q)'
+        sh 'docker stop $(docker ps -a -q) || true'
         withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USER')]) {
             sh 'docker login -u $DOCKER_USER -p $DOCKER_PASSWORD'
             sh './dockerbuild.sh'
