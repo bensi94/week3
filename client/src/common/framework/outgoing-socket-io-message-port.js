@@ -3,7 +3,7 @@ module.exports=function(injected){
     const messageRouter = injected('messageRouter');
 
     const outgoingMessageLogger = injected('outgoingMessageLogger', true);
-    const fs = injected('fs', true);
+    //const fs = injected('fs', true);
 
     return {
         dispatchThroughIo(routingKey, socketVerb, conditionFn){
@@ -23,4 +23,3 @@ module.exports=function(injected){
         }
     };
 };
-
