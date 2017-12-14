@@ -13,6 +13,8 @@ do
    sleep 2
 done
 
+hostInstance=$(aws ec2 describe-instances --filters "Name=key-name, Values=bensiKeyPair_0" --query Reservations[*].Instances[*].PublicDnsName --output=text)
+
 #We copy the files we need too the server
 scp -o StrictHostKeyChecking=no -i "~/runningInstances/$INSTANCE_ID/${KEY_PAIR_NAME}.pem" ./ec2-instance-check.sh ec2-user@${INSTANCE_PUBLIC_NAME}:~/ec2-instance-check.sh
 scp -o StrictHostKeyChecking=no -i "~/runningInstances/$INSTANCE_ID/${KEY_PAIR_NAME}.pem" ./docker-compose.yaml ec2-user@${INSTANCE_PUBLIC_NAME}:~/docker-compose.yaml
@@ -22,5 +24,5 @@ scp -o StrictHostKeyChecking=no -i "~/runningInstances/$INSTANCE_ID/${KEY_PAIR_N
 #Change the permissons so we can run the script on the sever, then we run it and compose the application from the docker-compose.yml file
 ssh -o StrictHostKeyChecking=no -i "~/runningInstances/$INSTANCE_ID/${KEY_PAIR_NAME}.pem" ec2-user@${INSTANCE_PUBLIC_NAME} "chmod +x ~/docker-compose-and-run.sh"
 ssh -o StrictHostKeyChecking=no -i "~/runningInstances/$INSTANCE_ID/${KEY_PAIR_NAME}.pem" ec2-user@${INSTANCE_PUBLIC_NAME} "~/docker-compose-and-run.sh $GIT_COMMIT"
-ssh -o StrictHostKeyChecking=no -i "~/runningInstances/$INSTANCE_ID/${KEY_PAIR_NAME}.pem" ec2-user@${INSTANCE_PUBLIC_NAME} "chmod +x ~/datadog-deploy-event.sh"
+ssh -o StrictHostKeyChecking=no -i "~/runningInstances/$INSTANCE_ID/${KEY_PAIR_NAME}.pem" ec2-user@${INSTANCE_PUBLIC_NAME} "chmod +x ~/datadog-deploy-event.sh $hostInstance"
 ssh -o StrictHostKeyChecking=no -i "~/runningInstances/$INSTANCE_ID/${KEY_PAIR_NAME}.pem" ec2-user@${INSTANCE_PUBLIC_NAME} "~/datadog-deploy-event.sh"
