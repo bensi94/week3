@@ -17,7 +17,7 @@ done
 scp -o StrictHostKeyChecking=no -i "~/runningInstances/$INSTANCE_ID/${KEY_PAIR_NAME}.pem" ./ec2-instance-check.sh ec2-user@${INSTANCE_PUBLIC_NAME}:~/ec2-instance-check.sh
 scp -o StrictHostKeyChecking=no -i "~/runningInstances/$INSTANCE_ID/${KEY_PAIR_NAME}.pem" ./docker-compose.yaml ec2-user@${INSTANCE_PUBLIC_NAME}:~/docker-compose.yaml
 scp -o StrictHostKeyChecking=no -i "~/runningInstances/$INSTANCE_ID/${KEY_PAIR_NAME}.pem" ./docker-compose-and-run.sh ec2-user@${INSTANCE_PUBLIC_NAME}:~/docker-compose-and-run.sh
-scp -o StrictHostKeyChecking=no -i "~/runningInstances/$INSTANCE_ID/${KEY_PAIR_NAME}.pem" ./ec2-instance-check.sh ec2-user@${INSTANCE_PUBLIC_NAME}:~/datadog-deploy-event.sh
+scp -o StrictHostKeyChecking=no -i "~/runningInstances/$INSTANCE_ID/${KEY_PAIR_NAME}.pem" ./datadog-deploy-event.sh ec2-user@${INSTANCE_PUBLIC_NAME}:~/datadog-deploy-event.sh
 
 #Change the permissons so we can run the script on the sever, then we run it and compose the application from the docker-compose.yml file
 ssh -o StrictHostKeyChecking=no -i "~/runningInstances/$INSTANCE_ID/${KEY_PAIR_NAME}.pem" ec2-user@${INSTANCE_PUBLIC_NAME} "chmod +x ~/docker-compose-and-run.sh"
