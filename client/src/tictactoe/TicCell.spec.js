@@ -57,22 +57,6 @@ describe("Tic Cell", function () {
     });
 
     it('MoveEvent from side should put that side in cell', function () {
-        // console.log(eventRouter);
-        // console.log(commandRouter);
-        // console.log(commandsReceived);
-        // const cellDiv = component.find('div');
-        // console.log(cellDiv.props());
-        // cellDiv.simulate('click');
-        // console.log(eventRouter);
-        // console.log(commandRouter);
-        // console.log(commandsReceived);
-        // console.log(cellDiv);
-        // component.node.simulate('click');
-        // console.log(component.find('div'));
-        // console.log();
-        // expect(
-        //     component.unrendered.props.move
-        // ).toEqual('X');
 
     });
 

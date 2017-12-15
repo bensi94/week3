@@ -1,12 +1,9 @@
 node {
     checkout scm
-    
+
     stage('Clean') {
         // Clean files from last build.
         sh 'git clean -dfxq'
-        sh 'docker kill $(docker ps -q) || true'
-        sh 'docker rm $(docker ps -a -q)|| true'
-        sh 'docker rmi $(docker images -q) || true'
     }
     stage('Instalize') {
         echo 'Instantizing..'
@@ -23,6 +20,7 @@ node {
             sh 'npm run test:nowatch'
         }
         sh 'npm run startserver:ci & npm run apitest:nowatch && npm run loadtest:nowatch && sleep 10 && kill $!'
+        sh 'docker kill $(docker ps -a -q  --filter="name=pg2")'
         junit '**/TestsResults/*.xml'
     }
 
