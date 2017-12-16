@@ -20,7 +20,7 @@ export default function (injected) {
                     this.setState({
                         move: moveEvent.move
                     });
-                };    
+                };
             });
         }
         componentWillUnmount(){

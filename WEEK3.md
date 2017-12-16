@@ -21,6 +21,7 @@ For the database migrations I created a up migration that adds the column *aggre
 
 Everything in the build Pipeline should be working, and it fails if test fail. I'm using Github webhook to push to jenkins.
 
+Jenkins also has a second job that runs every morning at 03:00 and cleans all docker containers.
 
 ####  Filled out the Assignments: for the API and Load tests
 
@@ -40,8 +41,8 @@ Everything seems to work here.
 
 #### My TicCell is tested
 
-Tests not fully completed.
+Tests for the ticCell should be fully implemented.
 
 #### I've set up Datadog
 
-Datadog has been set up and is show cpu, ram, docker containers, network in for both production and jenkins server. It also uses the datadog api to post an event when there is new version deployed on the production server, the event also shows a public address to the instance.
+Datadog has been set up and is show cpu, ram, docker containers, network in for both production and jenkins server. I also have a script that uses the datadog api to post an event when there is new version deployed on the production server, the event also shows a public address to the instance, and this is shown in the event stream on datadog dashboard.
