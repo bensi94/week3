@@ -29,7 +29,7 @@ My answers to the questions can be found in assignment.md in this repository
 
 #### The API and Load test run in my build pipeline on Jenkins and everything is cleaned up afterwards
 
-The test are run on the jenkins instance in the pipeline, and the process killed after running.
+The test are run on the jenkins instance in the pipeline, and the process killed after running. And the postgres continer is also killed after the tests.
 
 #### My test reports are published in Jenkins
 
